@@ -1,0 +1,25 @@
+kind: project
+metadata:
+  name: demobo
+spec:
+  description: demo bologna
+  functions:
+  - url: download-data.py
+    name: download-data
+    kind: job
+    image: mlrun/mlrun
+    handler: downloader
+  - url: process-spire.py
+    name: process-spire
+    kind: job
+    image: mlrun/mlrun
+    handler: process
+  - url: process-measures.py
+    name: process-measures
+    kind: job
+    image: mlrun/mlrun
+    handler: process
+  workflows: []
+  artifacts: []
+  source: ''
+  desired_state: online
