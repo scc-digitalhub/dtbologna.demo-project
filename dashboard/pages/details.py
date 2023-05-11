@@ -4,9 +4,16 @@ import numpy as np
 import mlrun
 import datetime
 
-# DATASET_SPIRE_URI = "store://datasets/demobo/process-spire-process_dataset-spire#0:latest"
 DATASET_SPIRE_URI = "../dataset-spire.parquet"
 DATASET_MEASURES_URI = "../dataset-measures.parquet"
+
+DATASET_DATA_KEY = "store://datasets/demobo/download-data-downloader_dataset#0:latest"
+DATASET_SPIRE_KEY = (
+    "store://datasets/demobo/process-spire-process_dataset-spire#0:latest"
+)
+DATASET_MEASURES_KEY = (
+    "store://datasets/demobo/process-measures-process_dataset-measures#0:latest"
+)
 
 
 @st.cache_data
@@ -16,32 +23,34 @@ def load_data(uri):
     return data
 
 
+@st.cache_data
+def fetch_data(key):
+    print("loading mlrun data item for {}".format(key))
+    return mlrun.get_dataitem(key).as_df()
+
+
 def map_data(df):
     print("prepare data for map")
-    df['longitude'] = df['longitudine']
-    df['latitude'] = df['latitudine']
+    df["longitude"] = df["longitudine"]
+    df["latitude"] = df["latitudine"]
     return df
 
 
-st.title('Spire parcheggi')
+st.title("Spire details")
 
 # load data
-data_load_state = st.text('Loading data...')
+data_load_state = st.text("Loading data...")
 data_spire = map_data(load_data(DATASET_SPIRE_URI))
 data_measures = load_data(DATASET_MEASURES_URI)
 
 # display
-data_load_state.text('All data loaded.')
+data_load_state.text("All data loaded.")
 
-st.header('Details data')
-selected_spire = st.selectbox(
-    "Please select a spire",
-    data_spire['codice'].astype(int)
-)
+st.header("Details data")
+selected_spire = st.selectbox("Please select a spire", data_spire["codice"].astype(int))
 
-cur_data = data_spire[data_spire['codice'] == selected_spire]
+cur_data = data_spire[data_spire["codice"] == selected_spire]
 if len(cur_data) > 0:
-
     cur_spire = cur_data.iloc[0]
 
     st.caption("Details")
@@ -52,7 +61,8 @@ if len(cur_data) > 0:
 
     with col2:
         address = "### {} *direzione* {}".format(
-            cur_spire['Nome via'], cur_spire['direzione'])
+            cur_spire["Nome via"], cur_spire["direzione"]
+        )
         st.write(address)
 
     st.caption("Position")
@@ -62,10 +72,12 @@ if len(cur_data) > 0:
     st.json(cur_spire.to_json())
 
     # data
-    cur_measures = data_measures[data_measures['codice spira']
-                                 == cur_spire['codice spira']]
-    cur_measures['timestamp'] = pd.to_datetime(
-        cur_measures['time'], format='%Y%m%d %H:%M:%S')
+    cur_measures = data_measures[
+        data_measures["codice spira"] == cur_spire["codice spira"]
+    ]
+    cur_measures["timestamp"] = pd.to_datetime(
+        cur_measures["time"], format="%Y%m%d %H:%M:%S"
+    )
 
     today = datetime.date.today()
     now = datetime.datetime.now()
@@ -77,18 +89,20 @@ if len(cur_data) > 0:
     dcol1, dcol2 = st.columns(2)
     with dcol1:
         start_date = st.date_input("Start date", now - datetime.timedelta(30))
-        start_time = st.time_input('start time', start_time)
+        start_time = st.time_input("start time", start_time)
     with dcol2:
         end_date = st.date_input("End date", today)
-        end_time = st.time_input('end time', end_time)
+        end_time = st.time_input("end time", end_time)
 
     start_timestamp = datetime.datetime.combine(start_date, start_time)
     end_timestamp = datetime.datetime.combine(end_date, end_time)
 
     st.write("Interval {}  -> {}".format(start_timestamp, end_timestamp))
 
-    idf = cur_measures[(cur_measures['timestamp'] >= start_timestamp)
-                       & (cur_measures['timestamp'] <= end_timestamp)]
+    idf = cur_measures[
+        (cur_measures["timestamp"] >= start_timestamp)
+        & (cur_measures["timestamp"] <= end_timestamp)
+    ]
 
     # measures
     st.caption("Raw measures")
@@ -96,4 +110,4 @@ if len(cur_data) > 0:
     st.dataframe(idf)
 
     # graph
-    st.line_chart(idf, x='time', y='value')
+    st.line_chart(idf, x="time", y="value")
