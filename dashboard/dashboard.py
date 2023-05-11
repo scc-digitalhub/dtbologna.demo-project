@@ -45,10 +45,10 @@ st.title("Spire dashboard")
 
 # load data
 data_load_state = st.text("Loading data...")
-data_spire = map_data(load_data(DATASET_SPIRE_URI))
-data_measures = load_data(DATASET_MEASURES_URI)
-# data_spire = map_data(fetch_data(DATASET_SPIRE_KEY))
-# data_measures = fetch_data(DATASET_MEASURES_KEY)
+# data_spire = map_data(load_data(DATASET_SPIRE_URI))
+# data_measures = load_data(DATASET_MEASURES_URI)
+data_spire = map_data(fetch_data(DATASET_SPIRE_KEY))
+data_measures = fetch_data(DATASET_MEASURES_KEY)
 
 data_measures["timestamp"] = pd.to_datetime(
     data_measures["time"], format="%Y%m%d %H:%M:%S"

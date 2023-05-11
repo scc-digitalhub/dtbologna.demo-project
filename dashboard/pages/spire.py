@@ -43,8 +43,8 @@ st.title("Spire overview")
 
 # load data
 data_load_state = st.text("Loading data...")
-data_spire = map_data(load_data(DATASET_SPIRE_URI))
-# data_spire = map_data(fetch_data(DATASET_SPIRE_KEY))
+# data_spire = map_data(load_data(DATASET_SPIRE_URI))
+data_spire = map_data(fetch_data(DATASET_SPIRE_KEY))
 
 
 # display

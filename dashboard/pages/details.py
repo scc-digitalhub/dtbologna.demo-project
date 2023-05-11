@@ -40,8 +40,10 @@ st.title("Spire details")
 
 # load data
 data_load_state = st.text("Loading data...")
-data_spire = map_data(load_data(DATASET_SPIRE_URI))
-data_measures = load_data(DATASET_MEASURES_URI)
+# data_spire = map_data(load_data(DATASET_SPIRE_URI))
+# data_measures = load_data(DATASET_MEASURES_URI)
+data_spire = map_data(fetch_data(DATASET_SPIRE_KEY))
+data_measures = fetch_data(DATASET_MEASURES_KEY)
 
 # display
 data_load_state.text("All data loaded.")
